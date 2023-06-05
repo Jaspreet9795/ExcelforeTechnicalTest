@@ -10,28 +10,26 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server {
+    // 
     ThreadPoolExecutor executor;
+    int port;
 
-    public Server() {
-        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+    public Server(int port) {
+        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
+        this.port = port;
     }
 
     public void startServer() {
-        int port = 8080;
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server started on port " + port);
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Accepted connection from " + clientSocket.getInetAddress());
-
-                // Thread clientThread = new Thread(() -> handleClient(clientSocket));
                 this.executor.submit(() -> handleClient(clientSocket));
-                // clientThread.start();
             }
         } catch (IOException e) {
             System.out.println("Error occurred: " + e.getMessage());
-
         }
 
     }

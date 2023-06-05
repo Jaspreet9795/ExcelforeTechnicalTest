@@ -5,26 +5,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
-public class Client implements Runnable {
+public class Client {
     private Socket socket;
     private String host;
     private int port;
 
-    public Client() {
-        this.host = "localhost";
-        this.port = 8080;
-        try {
-            socket = new Socket(host, port);
-        } catch (UnknownHostException e) {
-            System.out.println("Unknown host: " + host);
-        } catch (IOException e) {
-            System.out.println("Error occurred: " + e.getMessage());
-        }
+    public Client(String host, int port) throws IOException {
+        this.host = host;
+        this.port = port;
+        socket = new Socket(host, port);
+        socket.setSoTimeout(1000);
     }
 
-    public void run() {
+    public void makePingRequest() {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             PrintWriter writer = new PrintWriter(this.socket.getOutputStream(), true);
@@ -38,10 +32,11 @@ public class Client implements Runnable {
             if (response != null && response.equals("pong")) {
                 System.out.println("Received pong");
             } else {
-                System.out.println("Invalid response");
+                throw new RuntimeException("Invalid response");
             }
         } catch (IOException e) {
             System.out.println("Error occurred: " + e.getMessage());
+            throw new RuntimeException("Error occurred: " + e.getMessage(), e);
         }
     }
 }

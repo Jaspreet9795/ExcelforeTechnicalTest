@@ -3,16 +3,17 @@
  */
 package client;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
 
 public class App {
 
-    public static void main(String[] args) {
-        Client client = new Client();
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(client, 0, 1, TimeUnit.SECONDS);
+    public static void main(String[] args) throws IOException, InterruptedException {
+        String host = args[0];
+        String port = args[1];
+        Client client = new Client(host, Integer.parseInt(port));
+        while(true) {
+            client.makePingRequest();
+            Thread.sleep(1000);
+        }
     }
 }

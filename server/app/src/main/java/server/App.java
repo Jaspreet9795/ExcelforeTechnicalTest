@@ -3,15 +3,17 @@
  */
 package server;
 
+import java.util.Arrays;
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
-        Server server = new Server();
+
+        System.out.println("args "+ Arrays.toString(args));
+
+        String port = args[0];
+
+        Server server = new Server(Integer.parseInt(port));
         server.startServer();
     }
 }
