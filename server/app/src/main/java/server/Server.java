@@ -10,12 +10,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server {
-    // 
+    //
     ThreadPoolExecutor executor;
     int port;
 
+    /**
+     * This creates an instance of a server that listens on a port on localhost
+     * 
+     * @param port is the port that the server listens on localhost
+     */
     public Server(int port) {
-        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
+        /**
+         * Create a threadpool for serving client requests. Each client connection
+         * will be served by a dedicated thread. Due to this, the server will be limited
+         * to only serving the same number of clients as there are threads in the
+         * threadpool
+         */
+        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
         this.port = port;
     }
 
@@ -24,8 +35,11 @@ public class Server {
             System.out.println("Server started on port " + port);
 
             while (true) {
+                // establish a TCP connection with client
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Accepted connection from " + clientSocket.getInetAddress());
+
+                // submit task to threadpool to serve this client's requests
                 this.executor.submit(() -> handleClient(clientSocket));
             }
         } catch (IOException e) {
